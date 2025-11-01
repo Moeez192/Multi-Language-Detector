@@ -1,25 +1,82 @@
-N-Gram Based Language IdentifierThis repository contains a from-scratch Python implementation of a classic, n-gram-based language identification method.It works by creating "profiles" of the most frequent character n-grams for a set of known languages and then comparing an unknown text's profile against them to find the closest match.How it WorksThe logic is based on the 1994 paper by Cavnar and Trenkle.Profile Creation (Training):For each language, the fit() method ingests a large sample text.It cleans the text (lowercase, remove punctuation) and generates all character n-grams (e.g., from n=1 to n=5).It counts the frequencies of all n-grams and saves a ranked list of the top_n (e.g., top 300) most frequent ones. This list is the language's "profile" or "fingerprint."Language Detection (Prediction):When the predict() method receives a new text string, it generates its own top_n n-gram profile in the same way.It then calculates a "distance" score between the new text's profile and each known language profile.The "distance" is an "out-of-place" (OOP) metric: it sums the rank differences for each n-gram. A lower score means a closer match.The language with the lowest distance score is returned as the prediction.UsageYou can import the LanguageIdentifier class into your own project.from language_identifier import LanguageIdentifier
+# Machine Learning Language Detector
 
-# 1. Provide your own large text samples
-training_data = {
-    "en": "A very large string of text in English...",
-    "fr": "Un très long texte en français...",
-    "es": "Un texto muy largo en español..."
-}
+This project is a **language identification model** built in a Jupyter Notebook (`language_detector.ipynb`). It uses a **classic machine learning pipeline** to train a classifier that can predict the language of a given text snippet.
 
-# 2. Initialize and fit the model
-# Using n_max=5 and top_n=300 is a good starting point for real data
-identifier = LanguageIdentifier(n_min=1, n_max=5, top_n=300)
-identifier.fit(training_data)
+The model is trained on a dataset of text samples from various languages and evaluated for accuracy.
 
-# 3. Predict new text
-unknown_text = "Je ne sais pas quelle langue c'est."
-lang, scores = identifier.predict(unknown_text)
+---
 
-print(f"Predicted: {lang}")
-# Output: Predicted: fr
+## How It Works
 
-print(f"All scores (lower is better): {scores}")
-# Output: All scores (lower is better): {'en': 25012, 'fr': 1420, 'es': 22450}
-Running the ExampleThe language_identifier.py file contains a runnable example at the bottom. You can run it directly from your terminal:python language_identifier.py
-This will run the if __name__ == "__main__": block, which trains the model on a small sample of English, Spanish, and French text and then classifies three test sentences.ReferenceThis implementation is based on the approach described in:Cavnar, W. B., & Trenkle, J. M. (1994). N-gram-based text categorization. In Proceedings of SDAIR-94, 3rd annual symposium on document analysis and information retrieval (pp. 161-175).
+The `language_detector.ipynb` notebook implements the following **end-to-end ML pipeline**:
+
+1. **Load Data**  
+   Reads the pre-split training and testing data from the `/data` directory.
+
+2. **Text Preprocessing**  
+   Cleans the text data by:
+   - Removing punctuation, numbers, and stopwords
+   - Converting text to lowercase
+
+3. **Feature Extraction**  
+   Converts raw text into numerical format using:
+   - **TF-IDF (Term Frequency-Inverse Document Frequency)**  
+   - or **Count Vectorizer**
+
+4. **Model Training**  
+   Trains a classification algorithm such as:
+   - Multinomial Naive Bayes
+   - Logistic Regression
+   - Support Vector Machine (SVM)
+
+   Trained on vectorized `x_train.txt` and labels from `y_train.txt`.
+
+5. **Evaluation**  
+   Evaluates performance on the held-out test set (`x_test.txt`, `y_test.txt`) using:
+   - Accuracy
+   - Precision
+   - Recall
+   - Confusion Matrix
+
+6. **Prediction**  
+   Includes a function to predict the language of **new, unseen text**.
+
+---
+
+## Dataset
+
+The data is located in the `/data` directory and organized as follows:
+
+| File | Description |
+|------|-------------|
+| `x_train.txt` | Training text samples |
+| `y_train.txt` | Corresponding language labels for training |
+| `x_test.txt`  | Testing text samples |
+| `y_test.txt`  | Corresponding language labels for testing |
+| `labels.csv`  | Maps language codes (e.g., `en`, `fr`) to full names (e.g., `English`, `French`) |
+| `README.txt` / `urls.txt` | Metadata and source information about the dataset |
+
+---
+
+## Installation
+
+To run this project, you need **Python 3** and several data science libraries.
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Moeez192/Multi-Language-Detector.git
+cd language-detector
+```
+
+### 2. Create a Virtual Environment (Recommended)
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install jupyter notebook pandas scikit-learn
+```
+
